@@ -11,14 +11,18 @@ import android.text.style.AbsoluteSizeSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.TextAppearanceSpan;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
     private int prvCount=0;
-    int check=0;
-    int size=100,mcount=0,pLineCount=0;
+    int check=0,bck=0;
+    int size=90,mcount=0,pLineCount=0,previousLength=0;
+    private boolean backSpace;
+
     String prv="";
 
     @Override
@@ -33,17 +37,8 @@ public class MainActivity extends AppCompatActivity {
         editText.addTextChangedListener(new TextWatcher() {
             @Override
             public void afterTextChanged(Editable s) {
+                backSpace = previousLength > s.length();
 
-            }
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start,
-                                          int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start,
-                                      int before, int count) {
                 if(!prv.equals(s.toString())) {
                     prv=s.toString();
                     if (!s.equals("")) {
@@ -52,37 +47,46 @@ public class MainActivity extends AppCompatActivity {
                             editText.setTextSize(size);
                             size -= 2.66;
                             check = 1;
-                        } else   if (prv.length()%24==0) {
+                        } else   if (prv.length()%24==0 ) {
                             pLineCount=lineCount;
-                            size = 100;
-                            mcount=0;
-                            String dispStr = prv+"\n";
- //                           prv=prv+"\n";
-                        }
-                        else if (size >= 36  ) {
-                            //   editText.setTextSize(size);
-                            int part=(prv.length()/24)*24;
-                          //  int part=prv.length()-mcount;
-                            mcount++;
-                            String dispStr1 = prv.substring(0,part);
-                            String dispStr2 = prv.substring(part);
+                            if(backSpace ){
+                                s.replace(s.length(),s.length(),"");
+                                size=36;
+                            }else{
+                                size = 90;
+                                s.append("\n");
+                            }
 
-                            int startSpan1 = 0;
-                            int endSpan1 = dispStr1.length();
-                            Spannable spanRange1 = new SpannableString(dispStr1);
-                            spanRange1.setSpan(new AbsoluteSizeSpan(36 * (int) getResources().getDisplayMetrics().scaledDensity), startSpan1, endSpan1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-                            int startSpan2 = 0;
-                            int endSpan2 = dispStr2.length();
-                            Spannable spanRange2 = new SpannableString(dispStr2);
-                            spanRange2.setSpan(new AbsoluteSizeSpan(size * (int) getResources().getDisplayMetrics().scaledDensity), startSpan2, endSpan2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                            size -= 2.66;
-                            editText.setText(TextUtils.concat(spanRange1,spanRange2));
+                            s.setSpan(new AbsoluteSizeSpan(36 * (int) getResources().getDisplayMetrics().scaledDensity), 0, s.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                             editText.setSelection(editText.getText().length());
                         }
+                        else if (size >= 26  ) {
+                            int part=(prv.length()/24)*24;
+                            mcount++;
+                            s.setSpan(new AbsoluteSizeSpan(size * (int) getResources().getDisplayMetrics().scaledDensity), part, s.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            editText.setSelection(editText.getText().length());
+                            if(backSpace){
+                                size+=2.66;
+                                bck=1;
+                            }else{
+                                size -=2.66;
+                            }                        }
 
                     }
                 }
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start,
+                                          int count, int after) {
+                previousLength = s.length();
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start,
+                                      int before, int count) {
+
 
             }
         });
