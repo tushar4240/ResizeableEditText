@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:background="@drawable/background"
+    android:gravity="center"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+<EditText
+    android:id="@+id/autoResizeEditText"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:hint="TYPE SOMETHING"
+    android:background="@drawable/background"
+    android:padding="16dp"
+    android:fontFamily="sans-serif-condensed"
+    android:inputType="textCapSentences|textMultiLine"
+    android:maxLength="2000"
+    android:maxLines="20"
+    android:textColor="@android:color/white"
+    android:textColorHint="@android:color/white"
+  />
+</LinearLayout>
